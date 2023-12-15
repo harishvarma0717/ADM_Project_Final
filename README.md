@@ -19,8 +19,8 @@ This project aims to predict engine maintenance requirements based on various en
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/vehicle-maintenance-prediction.git
-   cd vehicle-maintenance-prediction
+   git clone https://github.com/harishvarma0717/ADM_Project_Final.git
+   cd ADM_Project_Final
 2. Install Dependencies:
 
 pip install -r requirements.txt
