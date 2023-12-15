@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Maintenance Prediction</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #prediction-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+            text-align: left;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #prediction-result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .maintenance-required {
+            color: #e74c3c;
+        }
+
+        .maintenance-not-required {
+            color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <div id="prediction-container">
+        <h1>Vehicle Maintenance Prediction</h1>
+        <form id="prediction-form">
+            <label for="Engine_RPM">Engine RPM:</label>
+            <input type="text" name="Engine_RPM" id="Engine_RPM" required>
+            
+            <label for="Lub_Oil_Pressure">Lub Oil Pressure:</label>
+            <input type="text" name="Lub_Oil_Pressure" id="Lub_Oil_Pressure" required>
+
+            <label for="Fuel_Pressure">Fuel Pressure:</label>
+            <input type="text" name="Fuel_Pressure" id="Fuel_Pressure" required>
+
+            <label for="Coolant_Pressure">Coolant Pressure:</label>
+            <input type="text" name="Coolant_Pressure" id="Coolant_Pressure" required>
+
+            <label for="Lub_Oil_Temp">Lub Oil Temperature:</label>
+            <input type="text" name="Lub_Oil_Temp" id="Lub_Oil_Temp" required>
+
+            <label for="Coolant_Temp">Coolant Temperature:</label>
+            <input type="text" name="Coolant_Temp" id="Coolant_Temp" required>
+            
+            <button type="button" onclick="predict()">Predict</button>
+        </form>
+        <p id="prediction-result"></p>
+    </div>
+
+    <script>
+        function predict() {
+            // Collect input values
+            var engineRPM = document.getElementById('Engine_RPM').value;
+            var lubOilPressure = document.getElementById('Lub_Oil_Pressure').value;
+            var fuelPressure = document.getElementById('Fuel_Pressure').value;
+            var coolantPressure = document.getElementById('Coolant_Pressure').value;
+            var lubOilTemp = document.getElementById('Lub_Oil_Temp').value;
+            var coolantTemp = document.getElementById('Coolant_Temp').value;
+
+            // Make a POST request to the Flask endpoint
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'Engine_RPM': engineRPM,
+                    'Lub_Oil_Pressure': lubOilPressure,
+                    'Fuel_Pressure': fuelPressure,
+                    'Coolant_Pressure': coolantPressure,
+                    'Lub_Oil_Temp': lubOilTemp,
+                    'Coolant_Temp': coolantTemp,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the prediction result
+                var resultMessage = data.maintenance_required ? 'Maintenance Required' : 'Maintenance Not Required';
+                var resultElement = document.getElementById('prediction-result');
+                resultElement.innerText = 'Prediction: ' + resultMessage;
+                resultElement.className = data.maintenance_required ? 'maintenance-required' : 'maintenance-not-required';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                var resultElement = document.getElementById('prediction-result');
+                resultElement.innerText = 'Error predicting';
+                resultElement.className = '';
+            });
+        }
+    </script>
+</body>
+</html>
